@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const waitTimeout = 100 * time.Millisecond
+
 func TestAcceptingNewClient(t *testing.T) {
 	var isAccepted bool
 
@@ -15,8 +17,7 @@ func TestAcceptingNewClient(t *testing.T) {
 	})
 
 	server.Start("localhost:6666")
-
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
@@ -25,7 +26,7 @@ func TestAcceptingNewClient(t *testing.T) {
 
 	clientConn.Close()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 	server.Stop()
 
 	if !isAccepted {
@@ -43,8 +44,7 @@ func TestDisconnectingClient(t *testing.T) {
 	})
 
 	server.Start("localhost:6666")
-
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
@@ -53,7 +53,7 @@ func TestDisconnectingClient(t *testing.T) {
 
 	clientConn.Close()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 	server.Stop()
 
 	if !isDisconnected {
@@ -72,8 +72,7 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	})
 
 	server.Start("localhost:6666")
-
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
@@ -83,7 +82,7 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	clientConn.Write([]byte("Ping message\n"))
 	clientConn.Close()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(waitTimeout)
 	server.Stop()
 
 	if !isReceived {
