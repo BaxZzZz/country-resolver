@@ -46,7 +46,8 @@ func (client *Client) GetRemoteIpAddress() (string, error) {
 type asyncServer struct {
 	listener                net.Listener
 	address                 string
-	done                    chan bool
+	doStop                  chan bool
+	isStopped               chan bool
 	newClientHandler        func(client *Client)
 	clientDisconnectHandler func(client *Client, err error)
 	clientMessageHandler    func(client *Client, message string)
@@ -57,7 +58,8 @@ func (server *asyncServer) Listen() {
 		connection, err := server.listener.Accept()
 		if err != nil {
 			select {
-			case <-server.done:
+			case <-server.doStop:
+				server.isStopped <- true
 				return
 			default:
 				log.Printf("Accept failed: %v", err)
@@ -75,8 +77,10 @@ func (server *asyncServer) Listen() {
 }
 
 func (server *asyncServer) Shutdown() error {
-	server.done <- true
+	server.doStop <- true
 	return server.listener.Close()
+	<- server.isStopped
+	return nil
 }
 
 func (server *asyncServer) OnNewClient(callbackFunc func(*Client)) {
@@ -100,7 +104,8 @@ func NewServer(address string) (*asyncServer, error) {
 	server := &asyncServer{
 		listener: listener,
 		address: address,
-		done: make(chan bool, 1),
+		doStop: make(chan bool, 1),
+		isStopped: make(chan bool),
 	}
 
 	server.OnNewClient(func(*Client) {})
