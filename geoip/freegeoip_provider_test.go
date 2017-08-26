@@ -1,8 +1,8 @@
 package geoip
 
 import (
-	"testing"
 	"github.com/golang/mock/gomock"
+	"testing"
 )
 
 const freeGeoIPJson = `{

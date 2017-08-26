@@ -1,10 +1,10 @@
 package tcp
 
 import (
+	"errors"
 	"net"
 	"testing"
 	"time"
-	"errors"
 )
 
 const waitTimeout = 100 * time.Millisecond

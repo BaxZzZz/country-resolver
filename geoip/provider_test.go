@@ -1,8 +1,8 @@
 package geoip
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestNewProviders(t *testing.T) {
@@ -20,13 +20,13 @@ func TestNewProviders(t *testing.T) {
 	expectedType := reflect.TypeOf(freeGeoIPProvider{}).Name()
 
 	if actualType != expectedType {
-		t.Fatal("Invalid type, expected: "  + expectedType + ", actual: " +actualType)
+		t.Fatal("Invalid type, expected: " + expectedType + ", actual: " + actualType)
 	}
 
 	actualType = reflect.TypeOf(providers[1]).Elem().Name()
 	expectedType = reflect.TypeOf(nekudoProvider{}).Name()
 
 	if actualType != expectedType {
-		t.Fatal("Invalid type, expected: "  + expectedType + ", actual: " +actualType)
+		t.Fatal("Invalid type, expected: " + expectedType + ", actual: " + actualType)
 	}
 }

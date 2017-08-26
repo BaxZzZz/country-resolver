@@ -79,7 +79,7 @@ func (server *asyncServer) Listen() {
 func (server *asyncServer) Shutdown() error {
 	server.doStop <- true
 	return server.listener.Close()
-	<- server.isStopped
+	<-server.isStopped
 	return nil
 }
 
@@ -102,9 +102,9 @@ func NewServer(address string) (*asyncServer, error) {
 	}
 
 	server := &asyncServer{
-		listener: listener,
-		address: address,
-		doStop: make(chan bool, 1),
+		listener:  listener,
+		address:   address,
+		doStop:    make(chan bool, 1),
 		isStopped: make(chan bool),
 	}
 

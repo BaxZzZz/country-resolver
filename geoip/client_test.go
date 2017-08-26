@@ -1,9 +1,9 @@
 package geoip
 
 import (
-	"testing"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
 func TestHttpClientRequest(t *testing.T) {
@@ -21,6 +21,6 @@ func TestHttpClientRequest(t *testing.T) {
 	}
 
 	if string(resp) != "OK" {
-		t.Fatal("Body: ",  string(resp))
+		t.Fatal("Body: ", string(resp))
 	}
 }

@@ -1,8 +1,8 @@
 package geoip
 
 import (
-	"net/http"
 	"io/ioutil"
+	"net/http"
 )
 
 type Client interface {
@@ -28,5 +28,3 @@ func (client *httpClient) Request(url string) ([]byte, error) {
 
 	return body, nil
 }
-
-
