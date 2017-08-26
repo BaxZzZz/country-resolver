@@ -8,7 +8,6 @@ import (
 )
 
 const waitTimeout = 100 * time.Millisecond
-const testAddress = "localhost:6666"
 
 func startClient(address string) (net.Conn, error) {
 	var reconnectCount uint
@@ -28,7 +27,7 @@ func startClient(address string) (net.Conn, error) {
 func TestAcceptingNewClient(t *testing.T) {
 	var isAccepted bool
 
-	server, err := NewServer(testAddress)
+	server, err := NewServer("localhost:6667")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +38,7 @@ func TestAcceptingNewClient(t *testing.T) {
 
 	go server.Listen()
 
-	client, err := startClient(testAddress)
+	client, err := startClient("localhost:6667")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,7 +55,7 @@ func TestAcceptingNewClient(t *testing.T) {
 func TestDisconnectingClient(t *testing.T) {
 	var isDisconnected bool
 
-	server, err := NewServer(testAddress)
+	server, err := NewServer("localhost:6668")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +66,7 @@ func TestDisconnectingClient(t *testing.T) {
 
 	go server.Listen()
 
-	client, err := startClient(testAddress)
+	client, err := startClient("localhost:6668")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,7 +85,7 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	var messageReceived string
 	var isReceived bool
 
-	server, err := NewServer(testAddress)
+	server, err := NewServer("localhost:6669")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +97,7 @@ func TestMessageReceivedFromClient(t *testing.T) {
 
 	go server.Listen()
 
-	client, err := startClient(testAddress)
+	client, err := startClient("localhost:6669")
 	if err != nil {
 		t.Fatal(err)
 	}
