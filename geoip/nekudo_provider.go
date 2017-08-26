@@ -18,7 +18,7 @@ type nekudoProvider struct {
 	client Client
 }
 
-func (provider *nekudoProvider) GetIpInfo(ipAddress string) (*IPInfo, error) {
+func (provider *nekudoProvider) GetIPInfo(ipAddress string) (*IPInfo, error) {
 	data, err := provider.client.Request(nekudoURL + ipAddress)
 	if err != nil {
 		return nil, err

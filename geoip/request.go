@@ -37,7 +37,7 @@ func (req *request) GetIPInfo(address string) (*IPInfo, error) {
 	} else if time.Since(req.currProvInfo.lastSwitchTime) > req.timeInterval {
 		req.currProvInfo.requestCount = 0
 		req.currProvInfo.lastSwitchTime = time.Now()
-	} else if req.currProvInfo.requestCount > req.limitRequests {
+	} else if req.currProvInfo.requestCount >= req.limitRequests {
 		providerInfo := req.getFrontProvider()
 		if time.Since(providerInfo.lastSwitchTime) < req.timeInterval {
 			return nil, errors.New("GeoIP providers unavailable")
@@ -45,7 +45,7 @@ func (req *request) GetIPInfo(address string) (*IPInfo, error) {
 		req.nextProvider()
 	}
 
-	info, err := req.currProvInfo.provider.GetIpInfo(address)
+	info, err := req.currProvInfo.provider.GetIPInfo(address)
 
 	if err != nil {
 		return nil, err

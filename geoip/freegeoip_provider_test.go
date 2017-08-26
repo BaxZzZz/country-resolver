@@ -32,7 +32,7 @@ func TestFreeGeoIPGetIPInfo(t *testing.T) {
 
 	provider := freeGeoIPProvider{client: mockClient}
 
-	info, err := provider.GetIpInfo("8.8.8.8")
+	info, err := provider.GetIPInfo("8.8.8.8")
 	if err != nil {
 		t.Fatalf("GetIpInfo: %v", err)
 	}

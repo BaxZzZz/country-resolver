@@ -14,7 +14,7 @@ type IPInfo struct {
 }
 
 type Provider interface {
-	GetIpInfo(ipAddress string) (*IPInfo, error)
+	GetIPInfo(ipAddress string) (*IPInfo, error)
 }
 
 func NewProviders(providerNames []string) ([]Provider, error) {

@@ -14,7 +14,7 @@ type freeGeoIPProvider struct {
 	client Client
 }
 
-func (provider *freeGeoIPProvider) GetIpInfo(ipAddress string) (*IPInfo, error) {
+func (provider *freeGeoIPProvider) GetIPInfo(ipAddress string) (*IPInfo, error) {
 	data, err := provider.client.Request(freeGeoIPURL + ipAddress)
 
 	if err != nil {
