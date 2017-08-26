@@ -6,7 +6,7 @@ install:
   - go get github.com/golang/mock/gomock
 
 script:
-  - go test ./...
+  - go test -v ./...
 
 notifications:
   recipients:
