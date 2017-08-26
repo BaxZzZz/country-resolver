@@ -1,0 +1,12 @@
+{
+  "name": "Country Resolver",
+  "description": "Country resolver by IP address",
+  "keywords": [
+    "country-resolver",
+    "go",
+  ],
+  "image": "heroku/go:1.8",
+  "mount_dir": "src/github.com/BaxZzZz/country-resolver",
+  "website": "http://github.com/BaxZzZz/country-resolver",
+  "repository": "http://github.com/BaxZzZz/country-resolver"
+}
