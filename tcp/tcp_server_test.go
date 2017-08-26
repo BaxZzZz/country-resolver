@@ -4,9 +4,26 @@ import (
 	"net"
 	"testing"
 	"time"
+	"errors"
 )
 
 const waitTimeout = 100 * time.Millisecond
+const testAddress = "localhost:6666"
+
+func startClient(address string) (net.Conn, error) {
+	var reconnectCount uint
+	for {
+		if reconnectCount > 5 {
+			return nil, errors.New("Failed to connect to server")
+		}
+		clientConn, err := net.Dial("tcp", address)
+		if err == nil {
+			return clientConn, nil
+		}
+		time.Sleep(waitTimeout)
+		reconnectCount++
+	}
+}
 
 func TestAcceptingNewClient(t *testing.T) {
 	var isAccepted bool
@@ -16,23 +33,23 @@ func TestAcceptingNewClient(t *testing.T) {
 		isAccepted = true
 	})
 
-	server.Start("localhost:6666")
-	time.Sleep(waitTimeout)
-
-	clientConn, err := net.Dial("tcp", "localhost:6666")
+	err := server.Start(testAddress)
 	if err != nil {
-		t.Fatal("Failed tp connect to server")
+		t.Fatalf("Failed to start server, %v", err)
 	}
 
-	clientConn.Close()
+	client, err := startClient(testAddress)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	time.Sleep(waitTimeout)
 	server.Stop()
+	client.Close()
 
 	if !isAccepted {
 		t.Fatal("Server not accepted client")
 	}
-
 }
 
 func TestDisconnectingClient(t *testing.T) {
@@ -43,15 +60,16 @@ func TestDisconnectingClient(t *testing.T) {
 		isDisconnected = true
 	})
 
-	server.Start("localhost:6666")
-	time.Sleep(waitTimeout)
-
-	clientConn, err := net.Dial("tcp", "localhost:6666")
+	err := server.Start("localhost:6666")
 	if err != nil {
-		t.Fatal("Failed tcp connect to server")
+		t.Fatalf("Failed to start server, %v", err)
 	}
 
-	clientConn.Close()
+	client, err := startClient(testAddress)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client.Close()
 
 	time.Sleep(waitTimeout)
 	server.Stop()
@@ -74,16 +92,15 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	server.Start("localhost:6666")
 	time.Sleep(waitTimeout)
 
-	clientConn, err := net.Dial("tcp", "localhost:6666")
+	client, err := startClient(testAddress)
 	if err != nil {
-		t.Fatal("Failed tp connect to server")
+		t.Fatal(err)
 	}
-
-	clientConn.Write([]byte("Ping message\n"))
-	clientConn.Close()
+	client.Write([]byte("Ping message\n"))
 
 	time.Sleep(waitTimeout)
 	server.Stop()
+	client.Close()
 
 	if !isReceived {
 		t.Fatal("Message not received")
