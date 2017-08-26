@@ -16,6 +16,8 @@ func TestAcceptingNewClient(t *testing.T) {
 
 	server.Start("localhost:6666")
 
+	time.Sleep(10 * time.Millisecond)
+
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
 		t.Fatal("Failed tp connect to server")
@@ -42,9 +44,11 @@ func TestDisconnectingClient(t *testing.T) {
 
 	server.Start("localhost:6666")
 
+	time.Sleep(10 * time.Millisecond)
+
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
-		t.Fatal("Failed tp connect to server")
+		t.Fatal("Failed tcp connect to server")
 	}
 
 	clientConn.Close()
@@ -68,6 +72,8 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	})
 
 	server.Start("localhost:6666")
+
+	time.Sleep(10 * time.Millisecond)
 
 	clientConn, err := net.Dial("tcp", "localhost:6666")
 	if err != nil {
