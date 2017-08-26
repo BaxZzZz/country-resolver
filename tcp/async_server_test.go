@@ -28,15 +28,16 @@ func startClient(address string) (net.Conn, error) {
 func TestAcceptingNewClient(t *testing.T) {
 	var isAccepted bool
 
-	server := NewTcpServer()
+	server, err := NewServer(testAddress)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	server.OnNewClient(func(client *Client) {
 		isAccepted = true
 	})
 
-	err := server.Start(testAddress)
-	if err != nil {
-		t.Fatalf("Failed to start server, %v", err)
-	}
+	go server.Listen()
 
 	client, err := startClient(testAddress)
 	if err != nil {
@@ -44,8 +45,8 @@ func TestAcceptingNewClient(t *testing.T) {
 	}
 
 	time.Sleep(waitTimeout)
-	server.Stop()
 	client.Close()
+	server.Shutdown()
 
 	if !isAccepted {
 		t.Fatal("Server not accepted client")
@@ -55,24 +56,26 @@ func TestAcceptingNewClient(t *testing.T) {
 func TestDisconnectingClient(t *testing.T) {
 	var isDisconnected bool
 
-	server := NewTcpServer()
+	server, err := NewServer(testAddress)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	server.OnClientDisconnected(func(*Client, error) {
 		isDisconnected = true
 	})
 
-	err := server.Start("localhost:6666")
-	if err != nil {
-		t.Fatalf("Failed to start server, %v", err)
-	}
+	go server.Listen()
 
 	client, err := startClient(testAddress)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	client.Close()
 
 	time.Sleep(waitTimeout)
-	server.Stop()
+	server.Shutdown()
 
 	if !isDisconnected {
 		t.Fatal("Client not disconnected")
@@ -83,14 +86,17 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	var messageReceived string
 	var isReceived bool
 
-	server := NewTcpServer()
+	server, err := NewServer(testAddress)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	server.OnClientMessageReceived(func(client *Client, message string) {
 		isReceived = true
 		messageReceived = message
 	})
 
-	server.Start("localhost:6666")
-	time.Sleep(waitTimeout)
+	go server.Listen()
 
 	client, err := startClient(testAddress)
 	if err != nil {
@@ -99,8 +105,8 @@ func TestMessageReceivedFromClient(t *testing.T) {
 	client.Write([]byte("Ping message\n"))
 
 	time.Sleep(waitTimeout)
-	server.Stop()
 	client.Close()
+	server.Shutdown()
 
 	if !isReceived {
 		t.Fatal("Message not received")

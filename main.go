@@ -2,9 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/BaxZzZz/country-resolver/geoip"
@@ -17,9 +14,6 @@ const (
 )
 
 func main() {
-
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	log.Println("Start country-resolver service")
 
@@ -35,7 +29,11 @@ func main() {
 		log.Fatalf("IP info provider manager failed to create, error: %v", err)
 	}
 
-	server := tcp.NewTcpServer()
+	server, err := tcp.NewServer(CONN_HOST + ":" + CONN_PORT)
+	if err != nil {
+		log.Fatalf("TCP server failed to start, error: %v", err)
+	}
+
 	server.OnNewClient(func(client *tcp.Client) {
 		ipAddr, err := client.GetRemoteIpAddress()
 		if err != nil {
@@ -56,13 +54,7 @@ func main() {
 		client.Close()
 	})
 
-	err = server.Start(CONN_HOST + ":" + CONN_PORT)
-	if err != nil {
-		log.Fatalf("TCP server failed to start, error: %v", err)
-	}
-
-	<-signals
+	server.Listen()
 
 	log.Println("Stop country-resolver service")
-	server.Stop()
 }
