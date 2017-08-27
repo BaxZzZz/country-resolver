@@ -12,18 +12,18 @@ type providerInfo struct {
 	requestCount   uint
 }
 
-type request struct {
+type Request struct {
 	limitRequests uint
 	timeInterval  time.Duration
 	providers     *list.List
 	currProvInfo  *providerInfo
 }
 
-func (req *request) getFrontProvider() *providerInfo {
+func (req *Request) getFrontProvider() *providerInfo {
 	return req.providers.Front().Value.(*providerInfo)
 }
 
-func (req *request) nextProvider() {
+func (req *Request) nextProvider() {
 	element := req.providers.Front()
 	req.currProvInfo = element.Value.(*providerInfo)
 	req.currProvInfo.lastSwitchTime = time.Now()
@@ -31,7 +31,7 @@ func (req *request) nextProvider() {
 	req.providers.MoveToBack(element)
 }
 
-func (req *request) GetIPInfo(address string) (*IPInfo, error) {
+func (req *Request) GetIPInfo(address string) (*IPInfo, error) {
 	if req.currProvInfo == nil {
 		req.nextProvider()
 	} else if time.Since(req.currProvInfo.lastSwitchTime) > req.timeInterval {
@@ -54,12 +54,12 @@ func (req *request) GetIPInfo(address string) (*IPInfo, error) {
 	return info, nil
 }
 
-func NewRequest(providers []Provider, limitRequests uint, timeInterval time.Duration) (*request, error) {
+func NewRequest(providers []Provider, limitRequests uint, timeInterval time.Duration) (*Request, error) {
 	if len(providers) == 0 {
 		return nil, errors.New("Empty GeoIP providers")
 	}
 
-	req := &request{
+	req := &Request{
 		limitRequests: limitRequests,
 		timeInterval:  timeInterval,
 		providers:     list.New(),

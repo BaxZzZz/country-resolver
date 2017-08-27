@@ -124,7 +124,7 @@ func TestWhenAllProvidersUnavailable(t *testing.T) {
 	secondProvider.EXPECT().GetIPInfo(gomock.Any()).Return(&IPInfo{}, nil).AnyTimes()
 
 	request, err := NewRequest([]Provider{firstProvider, secondProvider}, 2,
-		time.Duration(500) * time.Millisecond)
+		time.Duration(500)*time.Millisecond)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,7 +141,7 @@ func TestWhenAllProvidersUnavailable(t *testing.T) {
 		t.Fatal("Providers must be unavailable")
 	}
 
-	time.Sleep(1*time.Second)
+	time.Sleep(1 * time.Second)
 
 	isAvailable := false
 	for i := 0; i < 1000000; i++ {

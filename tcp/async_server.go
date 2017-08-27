@@ -8,7 +8,7 @@ import (
 
 type Client struct {
 	connection net.Conn
-	server     *asyncServer
+	server     *AsyncServer
 }
 
 func (client *Client) readMessage() {
@@ -43,7 +43,7 @@ func (client *Client) GetRemoteIpAddress() (string, error) {
 	return ip, nil
 }
 
-type asyncServer struct {
+type AsyncServer struct {
 	listener                net.Listener
 	address                 string
 	doStop                  chan bool
@@ -53,7 +53,7 @@ type asyncServer struct {
 	clientMessageHandler    func(client *Client, message string)
 }
 
-func (server *asyncServer) Listen() {
+func (server *AsyncServer) Listen() {
 	for {
 		connection, err := server.listener.Accept()
 		if err != nil {
@@ -76,32 +76,32 @@ func (server *asyncServer) Listen() {
 	}
 }
 
-func (server *asyncServer) Shutdown() error {
+func (server *AsyncServer) Shutdown() error {
 	server.doStop <- true
 	return server.listener.Close()
 	<-server.isStopped
 	return nil
 }
 
-func (server *asyncServer) OnNewClient(callbackFunc func(*Client)) {
+func (server *AsyncServer) OnNewClient(callbackFunc func(*Client)) {
 	server.newClientHandler = callbackFunc
 }
 
-func (server *asyncServer) OnClientDisconnected(callbackFunc func(*Client, error)) {
+func (server *AsyncServer) OnClientDisconnected(callbackFunc func(*Client, error)) {
 	server.clientDisconnectHandler = callbackFunc
 }
 
-func (server *asyncServer) OnClientMessageReceived(callbackFunc func(*Client, string)) {
+func (server *AsyncServer) OnClientMessageReceived(callbackFunc func(*Client, string)) {
 	server.clientMessageHandler = callbackFunc
 }
 
-func NewServer(address string) (*asyncServer, error) {
+func NewServer(address string) (*AsyncServer, error) {
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		return nil, err
 	}
 
-	server := &asyncServer{
+	server := &AsyncServer{
 		listener:  listener,
 		address:   address,
 		doStop:    make(chan bool, 1),

@@ -4,6 +4,8 @@ go:
 
 install:
   - go get github.com/golang/mock/gomock
+  - go get github.com/mitchellh/mapstructure
+  - go get gopkg.in/mgo.v2
 
 script:
   - go test -v ./...

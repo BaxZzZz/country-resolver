@@ -14,6 +14,8 @@ type TcpServerConfig struct {
 
 type DBCache struct {
 	MongoDBURL string `json:"mongo_db_url"`
+	DBName     string `json:"db_name"`
+	Collection string `json:"collection"`
 	ItemsLimit uint   `json:"items_limit"`
 }
 
@@ -23,13 +25,13 @@ type GeoIPProviderConfig struct {
 	TimeIntervalMin uint     `json:"time_interval_min"`
 }
 
-type AppConfig struct {
+type ResolverConfig struct {
 	TcpServer     TcpServerConfig     `json:"tcp_server"`
 	GeoIPProvider GeoIPProviderConfig `json:"geo_ip_provider"`
 	Cache         DBCache             `json:"cache"`
 }
 
-func (config *AppConfig) WriteToFile(filename string) error {
+func (config *ResolverConfig) WriteToFile(filename string) error {
 	data, err := json.MarshalIndent(config, "", "    ")
 	if err != nil {
 		return err
@@ -43,7 +45,7 @@ func (config *AppConfig) WriteToFile(filename string) error {
 	return nil
 }
 
-func (config *AppConfig) ReadFromFile(filename string) error {
+func (config *ResolverConfig) ReadFromFile(filename string) error {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
@@ -57,7 +59,7 @@ func (config *AppConfig) ReadFromFile(filename string) error {
 	return nil
 }
 
-func (config *AppConfig) Exists(filename string) bool {
+func (config *ResolverConfig) Exists(filename string) bool {
 	if _, err := os.Stat(filename); err != nil {
 		if os.IsNotExist(err) {
 			return false
@@ -66,11 +68,13 @@ func (config *AppConfig) Exists(filename string) bool {
 	return true
 }
 
-func (config *AppConfig) SetDefault() {
+func (config *ResolverConfig) SetDefault() {
 	config.TcpServer.Address = "0.0.0.0:9999"
 	config.GeoIPProvider.Providers = []string{geoip.FREE_GEO_IP_NAME, geoip.NEKUDO_NAME}
 	config.GeoIPProvider.RequestsLimit = 10
 	config.GeoIPProvider.TimeIntervalMin = 1
-	config.Cache.MongoDBURL = "mongodb://localhost/country_resolver"
+	config.Cache.MongoDBURL = "mongodb://localhost"
+	config.Cache.DBName = "resolver"
+	config.Cache.Collection = "cache"
 	config.Cache.ItemsLimit = 100000
 }
