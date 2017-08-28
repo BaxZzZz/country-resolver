@@ -1,13 +1,12 @@
 package main
 
 import (
-	"errors"
-	"log"
-	"time"
-	"tcp"
 	"cache"
+	"errors"
 	"geoip"
-	"os"
+	"log"
+	"tcp"
+	"time"
 )
 
 // GeoIP Resolver
@@ -61,12 +60,6 @@ func NewResolver(config *ResolverConfig) (*Resolver, error) {
 	lruCache, err := cache.NewLRUCache(config.Cache.ItemsLimit, store)
 	if err != nil {
 		return nil, err
-	}
-
-	// Hack for running on heroku cloud
-	envPort := os.Getenv("PORT")
-	if envPort != "" {
-		config.TcpServer.Address = "0.0.0.0:"+ envPort
 	}
 
 	server, err := tcp.NewServer(config.TcpServer.Address)

@@ -37,7 +37,6 @@ func (client *Client) readMessage() {
 	}
 }
 
-
 // Send text message to client
 func (client *Client) SendMessage(message string) error {
 	_, err := client.connection.Write([]byte(message))
