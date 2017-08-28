@@ -1,12 +1,10 @@
 [![Build Status](https://travis-ci.org/BaxZzZz/country-resolver.svg?branch=master)](https://travis-ci.org/BaxZzZz/country-resolver) 
 
-# country-resolver
-
-Description:
+**Description:**
 
 GeoIP information aggregator service with local cache. Demo.
 
-Application launch:
+**Application launch:**
 
 In order to run the application install >=MongoDB 3.0.14. and package manager:
 
@@ -32,9 +30,9 @@ To launch application:
 bin/main
 </pre>
 
-Configuration:
+**Configuration:**
 
-In order to get the default configuration file launch the application to generate it.Configuration file:
+In order to get the default configuration file launch the application to generate it. Configuration file:
 
 <pre>
 {
@@ -61,7 +59,7 @@ In order to get the default configuration file launch the application to generat
 
 </pre>
 
-Application check:
+**Application check:**
 
 To check the work of the application one can use Netcat or Telnet, for example:
 
