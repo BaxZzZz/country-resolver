@@ -96,6 +96,8 @@ func (server *AsyncServer) OnClientMessageReceived(callbackFunc func(*Client, st
 }
 
 func NewServer(address string) (*AsyncServer, error) {
+	log.Println("Start TCP server on " + address)
+
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		return nil, err
