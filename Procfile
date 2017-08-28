@@ -1,1 +1,1 @@
-web: bin/country-resolver
+web: bin/main

@@ -4,10 +4,9 @@ import (
 	"errors"
 	"log"
 	"time"
-
-	"github.com/BaxZzZz/country-resolver/cache"
-	"github.com/BaxZzZz/country-resolver/geoip"
-	"github.com/BaxZzZz/country-resolver/tcp"
+	"tcp"
+	"cache"
+	"geoip"
 )
 
 type Resolver struct {

@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-
-	"github.com/BaxZzZz/country-resolver/geoip"
+	"geoip"
 )
 
 type TcpServerConfig struct {
