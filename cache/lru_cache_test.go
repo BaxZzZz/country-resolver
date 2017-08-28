@@ -1,9 +1,10 @@
 package cache
 
 import (
-	"github.com/golang/mock/gomock"
-	"github.com/pkg/errors"
+	"errors"
 	"testing"
+
+	"github.com/golang/mock/gomock"
 )
 
 func TestLRUCacheGetNonExisten(t *testing.T) {
