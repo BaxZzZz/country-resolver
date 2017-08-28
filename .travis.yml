@@ -6,6 +6,7 @@ install:
   - go get github.com/constabulary/gb/...
 script:
   - gb build
+  - gb vendor restore
   - gb test -v
 notifications:
   recipients:
