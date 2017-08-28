@@ -44,7 +44,12 @@ func NewResolver(config *ResolverConfig) (*Resolver, error) {
 		return nil, err
 	}
 
-	store, err := cache.NewMongoDBStore(config.Cache.MongoDBURL, config.Cache.DBName, config.Cache.Collection)
+	store, err := cache.NewMongoDBStore(
+		config.Cache.Address,
+		config.Cache.DBName,
+		config.Cache.Username,
+		config.Cache.Password,
+		config.Cache.Collection)
 	if err != nil {
 		return nil, err
 	}

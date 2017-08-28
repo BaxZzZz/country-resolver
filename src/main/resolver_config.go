@@ -2,18 +2,20 @@ package main
 
 import (
 	"encoding/json"
+	"geoip"
 	"io/ioutil"
 	"os"
-	"geoip"
 )
 
 type TcpServerConfig struct {
 	Address string `json:"address"`
 }
 
-type DBCache struct {
-	MongoDBURL string `json:"mongo_db_url"`
+type MongoDBCache struct {
+	Address    string `json:"address"`
 	DBName     string `json:"db_name"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
 	Collection string `json:"collection"`
 	ItemsLimit uint   `json:"items_limit"`
 }
@@ -27,7 +29,7 @@ type GeoIPProviderConfig struct {
 type ResolverConfig struct {
 	TcpServer     TcpServerConfig     `json:"tcp_server"`
 	GeoIPProvider GeoIPProviderConfig `json:"geo_ip_provider"`
-	Cache         DBCache             `json:"cache"`
+	Cache         MongoDBCache        `json:"cache"`
 }
 
 func (config *ResolverConfig) WriteToFile(filename string) error {
@@ -72,7 +74,9 @@ func (config *ResolverConfig) SetDefault() {
 	config.GeoIPProvider.Providers = []string{geoip.FREE_GEO_IP_NAME, geoip.NEKUDO_NAME}
 	config.GeoIPProvider.RequestsLimit = 100
 	config.GeoIPProvider.TimeIntervalMin = 1
-	config.Cache.MongoDBURL = "mongodb://localhost"
+	config.Cache.Address = "localhost"
+	config.Cache.Username = "test"
+	config.Cache.Password = "test"
 	config.Cache.DBName = "resolver"
 	config.Cache.Collection = "cache"
 	config.Cache.ItemsLimit = 100000

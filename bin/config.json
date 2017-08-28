@@ -1,0 +1,21 @@
+{
+    "tcp_server": {
+        "address": "0.0.0.0:80"
+    },
+    "geo_ip_provider": {
+        "providers": [
+            "freegeoip.net",
+            "geoip.nekudo.com"
+        ],
+        "requests_limit": 100,
+        "time_interval_min": 1
+    },
+    "cache": {
+        "address": "ds161833.mlab.com:61833",
+        "db_name": "heroku_1gt9056r",
+        "username": "resolver",
+        "password": "1q2w3e",
+        "collection": "cache",
+        "items_limit": 100000
+    }
+}

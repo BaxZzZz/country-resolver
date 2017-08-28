@@ -6,6 +6,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 type Item struct {
@@ -75,8 +76,21 @@ func (store *MongoDBStore) Close() {
 	store.session.Close()
 }
 
-func NewMongoDBStore(url string, dbName string, collection string) (*MongoDBStore, error) {
-	session, err := mgo.Dial(url)
+func NewMongoDBStore(url string, dbName string, username string, password string,
+	collection string) (*MongoDBStore, error) {
+
+	log.Println("Connect to DB, url: " + url + ", dbName: " + dbName + ", collection: " + collection)
+
+	dialInfo := &mgo.DialInfo{
+		Addrs:    []string{url},
+		Timeout:  10 * time.Second,
+		Database: dbName,
+		Username: username,
+		Password: password,
+	}
+
+	session, err := mgo.DialWithInfo(dialInfo)
+
 	if err != nil {
 		return nil, err
 	}
