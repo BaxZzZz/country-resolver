@@ -1,6 +1,6 @@
 {
     "tcp_server": {
-        "address": "0.0.0.0:80"
+        "address": "0.0.0.0:40125"
     },
     "geo_ip_provider": {
         "providers": [
