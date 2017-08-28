@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-func TestLRUCacheGetNonExisten(t *testing.T) {
+func TestLRUCacheGetNonExistenObject(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
