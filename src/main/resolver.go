@@ -88,6 +88,8 @@ func (resolver *Resolver) handleNewClient(client *tcp.Client) {
 		return
 	}
 
+	log.Println("Client: " + ipAddr + " was connected.")
+
 	ipInfo := &geoip.IPInfo{}
 	err = resolver.cache.Get(ipAddr, ipInfo)
 	if err == nil {

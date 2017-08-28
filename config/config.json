@@ -1,6 +1,6 @@
 {
     "tcp_server": {
-        "address": "0.0.0.0:40125"
+        "address": "0.0.0.0:9999"
     },
     "geo_ip_provider": {
         "providers": [
@@ -11,10 +11,10 @@
         "time_interval_min": 1
     },
     "cache": {
-        "address": "ds161833.mlab.com:61833",
-        "db_name": "heroku_1gt9056r",
-        "username": "resolver",
-        "password": "1q2w3e",
+        "address": "localhost",
+        "db_name": "resolver",
+        "username": "",
+        "password": "",
         "collection": "cache",
         "items_limit": 100000
     }
