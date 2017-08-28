@@ -26,6 +26,12 @@ To launch unit tests run the command:
 gb test
 </pre>
 
+To launch application:
+
+<pre>
+bin/main
+</pre>
+
 Configuration:
 
 In order to get the default configuration file launch the application to generate it.Configuration file:
