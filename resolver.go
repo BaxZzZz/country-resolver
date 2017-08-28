@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"time"
-	"errors"
 
 	"github.com/BaxZzZz/country-resolver/cache"
 	"github.com/BaxZzZz/country-resolver/geoip"
@@ -12,7 +12,7 @@ import (
 
 type Resolver struct {
 	tcpServer    *tcp.AsyncServer
-	cache        *cache.LruCache
+	cache        *cache.LRUCache
 	geoIPRequest *geoip.Request
 }
 
@@ -33,7 +33,6 @@ func GetResolverConfig(filename string) (*ResolverConfig, error) {
 	return config, nil
 }
 
-
 func NewResolver(config *ResolverConfig) (*Resolver, error) {
 	providers, err := geoip.NewProviders(config.GeoIPProvider.Providers)
 	if err != nil {
@@ -46,14 +45,14 @@ func NewResolver(config *ResolverConfig) (*Resolver, error) {
 		return nil, err
 	}
 
-	store, err := cache.NewMongoDbStore(config.Cache.MongoDBURL, config.Cache.DBName, config.Cache.Collection)
+	store, err := cache.NewMongoDBStore(config.Cache.MongoDBURL, config.Cache.DBName, config.Cache.Collection)
 	if err != nil {
 		return nil, err
 	}
 
-	lruCache := &cache.LruCache{
-		ItemsLimit: config.Cache.ItemsLimit,
-		Store: store,
+	lruCache, err := cache.NewLRUCache(config.Cache.ItemsLimit, store)
+	if err != nil {
+		return nil, err
 	}
 
 	server, err := tcp.NewServer(config.TcpServer.Address)
@@ -101,6 +100,11 @@ func (resolver *Resolver) handleNewClient(client *tcp.Client) {
 
 	client.SendMessage(ipInfo.CountryName + "\n")
 	client.Close()
+}
+
+func (resolver *Resolver) Close() {
+	resolver.cache.Close()
+	resolver.tcpServer.Shutdown()
 }
 
 func (resolver *Resolver) Run() {

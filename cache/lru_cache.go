@@ -1,43 +1,43 @@
 package cache
 
-import "github.com/mitchellh/mapstructure"
+import "errors"
 
-type LruCache struct {
+type LRUCache struct {
 	ItemsLimit uint
 	Store      DataStore
 }
 
-func (lruCache *LruCache) Set(key string, object interface{}) error {
-	countItems, err := lruCache.Store.GetItemsCount()
+func (lruCache *LRUCache) Set(key string, object interface{}) error {
+	countItems, err := lruCache.Store.GetCount()
 	if err != nil {
 		return err
 	}
 
 	if countItems >= lruCache.ItemsLimit {
-		err = lruCache.Store.RemoveOldItem()
+		err = lruCache.Store.RemoveOld()
 		if err != nil {
 			return err
 		}
 	}
 
-	lruCache.Store.SetItem(&Item{
-		Key:       key,
-		Object:    object,
-		Timestamp: makeTimestamp(),
-	})
-
-	return nil
+	return lruCache.Store.Set(key, object)
 }
 
-func (lruCache *LruCache) Get(key string, object interface{}) error {
-	item, err := lruCache.Store.FindItem(key)
-	if err != nil {
-		return err
+func (lruCache *LRUCache) Get(key string, object interface{}) error {
+	return lruCache.Store.Find(key, object)
+}
+
+func (lruCache *LRUCache) Close() {
+	lruCache.Store.Close()
+}
+
+func NewLRUCache(itemsLimit uint, store DataStore) (*LRUCache, error) {
+	if itemsLimit == 0 {
+		return nil, errors.New("Items limit must be greater 0")
 	}
 
-	return mapstructure.Decode(item.Object, object)
-}
-
-func (lruCache *LruCache) Close() {
-	lruCache.Store.Close()
+	return &LRUCache{
+		ItemsLimit: itemsLimit,
+		Store:      store,
+	}, nil
 }

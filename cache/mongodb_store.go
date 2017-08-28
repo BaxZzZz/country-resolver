@@ -1,16 +1,29 @@
 package cache
 
 import (
+	"time"
+
+	"github.com/mitchellh/mapstructure"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-type mongoDBStore struct {
+type Item struct {
+	Key       string
+	Object    interface{}
+	Timestamp int64
+}
+
+type MongoDBStore struct {
 	session    *mgo.Session
 	collection *mgo.Collection
 }
 
-func (store *mongoDBStore) GetItemsCount() (uint, error) {
+func makeTimestamp() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
+func (store *MongoDBStore) GetCount() (uint, error) {
 	count, err := store.collection.Find(bson.M{}).Count()
 	if err != nil {
 		return 0, nil
@@ -19,34 +32,50 @@ func (store *mongoDBStore) GetItemsCount() (uint, error) {
 	return uint(count), nil
 }
 
-func (store *mongoDBStore) SetItem(item *Item) error {
+func (store *MongoDBStore) Set(key string, object interface{}) error {
+	item := &Item{
+		Key:       key,
+		Object:    object,
+		Timestamp: makeTimestamp(),
+	}
+
 	return store.collection.Insert(item)
 }
 
-func (store *mongoDBStore) FindItem(key string) (*Item, error) {
-	item := &Item{}
+func (store *MongoDBStore) Find(key string, object interface{}) error {
+	item := &Item{
+		Key:       key,
+		Object:    object,
+		Timestamp: makeTimestamp(),
+	}
+
 	err := store.collection.Find(bson.M{"key": key}).One(item)
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	err = mapstructure.Decode(item.Object, object)
+	if err != nil {
+		return err
 	}
 
 	err = store.collection.Update(bson.M{"key": key}, bson.M{"$set": bson.M{"timestamp": makeTimestamp()}})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return item, nil
+	return nil
 }
 
-func (store *mongoDBStore) RemoveOldItem() error {
+func (store *MongoDBStore) RemoveOld() error {
 	return store.collection.Remove(bson.M{"timestamp": bson.M{"$lt": makeTimestamp()}})
 }
 
-func (store *mongoDBStore) Close() {
+func (store *MongoDBStore) Close() {
 	store.session.Close()
 }
 
-func NewMongoDbStore(url string, dbName string, collection string) (*mongoDBStore, error) {
+func NewMongoDBStore(url string, dbName string, collection string) (*MongoDBStore, error) {
 	session, err := mgo.Dial(url)
 	if err != nil {
 		return nil, err
@@ -54,7 +83,7 @@ func NewMongoDbStore(url string, dbName string, collection string) (*mongoDBStor
 
 	session.SetMode(mgo.Monotonic, true)
 
-	store := &mongoDBStore{
+	store := &MongoDBStore{
 		session:    session,
 		collection: session.DB(dbName).C(collection),
 	}

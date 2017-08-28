@@ -71,7 +71,7 @@ func (config *ResolverConfig) Exists(filename string) bool {
 func (config *ResolverConfig) SetDefault() {
 	config.TcpServer.Address = "0.0.0.0:9999"
 	config.GeoIPProvider.Providers = []string{geoip.FREE_GEO_IP_NAME, geoip.NEKUDO_NAME}
-	config.GeoIPProvider.RequestsLimit = 10
+	config.GeoIPProvider.RequestsLimit = 100
 	config.GeoIPProvider.TimeIntervalMin = 1
 	config.Cache.MongoDBURL = "mongodb://localhost"
 	config.Cache.DBName = "resolver"
