@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-const configFilename = "../config/config.json"
+const configFilename = "config/config.json"
 
 func main() {
 	signals := make(chan os.Signal, 1)
