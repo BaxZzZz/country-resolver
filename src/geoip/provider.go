@@ -9,14 +9,17 @@ const (
 	NEKUDO_NAME      = "geoip.nekudo.com"
 )
 
+// Information about IP address
 type IPInfo struct {
 	CountryName string
 }
 
+// GeoIP Provider interface
 type Provider interface {
 	GetIPInfo(ipAddress string) (*IPInfo, error)
 }
 
+// Creates new provider instance
 func NewProviders(providerNames []string) ([]Provider, error) {
 	var providers []Provider
 	for _, providerName := range providerNames {

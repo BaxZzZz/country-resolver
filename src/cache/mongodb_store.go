@@ -9,21 +9,25 @@ import (
 	"log"
 )
 
+// Item with data and update timestamp
 type Item struct {
 	Key       string
 	Object    interface{}
 	Timestamp int64
 }
 
+// Data store on MongoDB database
 type MongoDBStore struct {
 	session    *mgo.Session
 	collection *mgo.Collection
 }
 
+// Make new timestamp
 func makeTimestamp() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
 }
 
+// Get objects amount
 func (store *MongoDBStore) GetCount() (uint, error) {
 	count, err := store.collection.Find(bson.M{}).Count()
 	if err != nil {
@@ -33,6 +37,7 @@ func (store *MongoDBStore) GetCount() (uint, error) {
 	return uint(count), nil
 }
 
+// Set new object to store by key
 func (store *MongoDBStore) Set(key string, object interface{}) error {
 	item := &Item{
 		Key:       key,
@@ -43,6 +48,7 @@ func (store *MongoDBStore) Set(key string, object interface{}) error {
 	return store.collection.Insert(item)
 }
 
+// Find object by key value
 func (store *MongoDBStore) Find(key string, object interface{}) error {
 	item := &Item{
 		Key:       key,
@@ -68,14 +74,17 @@ func (store *MongoDBStore) Find(key string, object interface{}) error {
 	return nil
 }
 
+// Remove the oldest record
 func (store *MongoDBStore) RemoveOld() error {
 	return store.collection.Remove(bson.M{"timestamp": bson.M{"$lt": makeTimestamp()}})
 }
 
+// Close working with store
 func (store *MongoDBStore) Close() {
 	store.session.Close()
 }
 
+// Creates new MongoDB store instance
 func NewMongoDBStore(url string, dbName string, username string, password string,
 	collection string) (*MongoDBStore, error) {
 

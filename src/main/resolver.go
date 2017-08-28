@@ -10,12 +10,14 @@ import (
 	"os"
 )
 
+// GeoIP Resolver
 type Resolver struct {
 	tcpServer    *tcp.AsyncServer
 	cache        *cache.LRUCache
 	geoIPRequest *geoip.Request
 }
 
+// Get resolver config from configuration file
 func GetResolverConfig(filename string) (*ResolverConfig, error) {
 	config := &ResolverConfig{}
 
@@ -33,6 +35,7 @@ func GetResolverConfig(filename string) (*ResolverConfig, error) {
 	return config, nil
 }
 
+// Creates new resolver instance
 func NewResolver(config *ResolverConfig) (*Resolver, error) {
 	providers, err := geoip.NewProviders(config.GeoIPProvider.Providers)
 	if err != nil {
@@ -80,6 +83,7 @@ func NewResolver(config *ResolverConfig) (*Resolver, error) {
 	return resolver, nil
 }
 
+// Handler new connection with client
 func (resolver *Resolver) handleNewClient(client *tcp.Client) {
 	ipAddr, err := client.GetRemoteIpAddress()
 	if err != nil {
@@ -115,11 +119,13 @@ func (resolver *Resolver) handleNewClient(client *tcp.Client) {
 	client.Close()
 }
 
+// Close resolver
 func (resolver *Resolver) Close() {
 	resolver.cache.Close()
 	resolver.tcpServer.Shutdown()
 }
 
+// Run listen new connection
 func (resolver *Resolver) Run() {
 	resolver.tcpServer.OnNewClient(resolver.handleNewClient)
 	resolver.tcpServer.Listen()
