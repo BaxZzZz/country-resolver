@@ -37,7 +37,7 @@ In order to get the default configuration file launch the application to generat
 <pre>
 {
     "tcp_server": {
-        "address": "0.0.0.0:9999" #
+        "address": "0.0.0.0:9999"
     },
     "geo_ip_provider": {
         "providers": [
