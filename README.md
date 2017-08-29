@@ -12,7 +12,7 @@ In order to run the application install >=MongoDB 3.0.14. and package manager:
 go get github.com/constabulary/gb/...
 </pre>
 
-Restore dependencies from manifest^
+Restore dependencies from manifest:
 
 <pre>
 gb vendor restore
